@@ -47,13 +47,11 @@ type AtReconciler struct {
 // +kubebuilder:rbac:groups=cnat.programming-kubernetes.info,resources=ats/status,verbs=get;update;patch
 
 func (r *AtReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	_ = context.Background()
-
 	reqLogger := r.Log.WithValues("namespace", req.Namespace, "at", req.Name)
 	reqLogger.Info("=== Reconciling At")
 	// Fetch the At instance
 	instance := &cnatv1.At{}
-	err := r.Get(context.TODO(), req.NamespacedName, instance)
+	err := r.Get(context.Background(), req.NamespacedName, instance)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			// Request object not found, could have been deleted after reconcile request - return and don't requeue:
@@ -98,7 +96,7 @@ func (r *AtReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 			return reconcile.Result{}, err
 		}
 		found := &corev1.Pod{}
-		err = r.Get(context.TODO(), types.NamespacedName{Name: pod.Name, Namespace: pod.Namespace}, found)
+		err = r.Get(context.Background(), types.NamespacedName{Name: pod.Name, Namespace: pod.Namespace}, found)
 		// Try to see if the pod already exists and if not
 		// (which we expect) then create a one-shot pod as per spec:
 		if err != nil && errors.IsNotFound(err) {
@@ -127,7 +125,7 @@ func (r *AtReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	}
 
 	// Update the At instance, setting the status to the respective phase:
-	err = r.Status().Update(context.TODO(), instance)
+	err = r.Status().Update(context.Background(), instance)
 	if err != nil {
 		return reconcile.Result{}, err
 	}

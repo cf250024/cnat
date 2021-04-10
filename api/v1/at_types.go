@@ -56,9 +56,9 @@ type AtStatus struct {
 
 // At is the Schema for the ats API
 // +k8s:openapi-gen=true
-// +kubebuilder:subresource:status
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
 
 // At is the Schema for the ats API
 type At struct {

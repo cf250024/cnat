@@ -20,6 +20,12 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+const (
+	PhasePending = "PENDING"
+	PhaseRunning = "RUNNING"
+	PhaseDone    = "DONE"
+)
+
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
@@ -28,15 +34,29 @@ type AtSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of At. Edit At_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// Schedule is the desired time the command is supposed to be executed.
+	// Note: the format used here is UTC time https://www.utctime.net
+	Schedule string `json:"schedule,omitempty"`
+	// Command is the desired command (executed in a Bash shell) to be executed.
+	Command string `json:"command,omitempty"`
 }
 
 // AtStatus defines the observed state of At
 type AtStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+
+	// Phase represents the state of the schedule: until the command is executed
+	// it is PENDING, afterwards it is DONE.
+	Phase string `json:"phase,omitempty"`
 }
+
+// +genclient
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// At is the Schema for the ats API
+// +k8s:openapi-gen=true
+// +kubebuilder:subresource:status
 
 // +kubebuilder:object:root=true
 
@@ -50,6 +70,7 @@ type At struct {
 }
 
 // +kubebuilder:object:root=true
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // AtList contains a list of At
 type AtList struct {

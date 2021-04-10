@@ -1,0 +1,7 @@
+domain: programming-kubernetes.info
+repo: github.com/cf250024/cnat
+resources:
+- group: cnat
+  kind: At
+  version: v1
+version: "2"

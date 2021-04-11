@@ -5,4 +5,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: quay.io/cf250024/cnat
-  newTag: v1
+  newTag: v2

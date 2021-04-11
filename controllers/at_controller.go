@@ -43,6 +43,13 @@ type AtReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+// Reconcile reads that state of the cluster for a At object and makes changes based on the state read
+// and what is in the At.Spec
+// Automatically generate RBAC rules to allow the Controller to read and write Deployments
+// +kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=apps,resources=deployments/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=apps,resources=pods,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=apps,resources=pods/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=cnat.programming-kubernetes.info,resources=ats,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=cnat.programming-kubernetes.info,resources=ats/status,verbs=get;update;patch
 
@@ -100,7 +107,7 @@ func (r *AtReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		// Try to see if the pod already exists and if not
 		// (which we expect) then create a one-shot pod as per spec:
 		if err != nil && errors.IsNotFound(err) {
-			err = r.Create(context.TODO(), pod)
+			err = r.Create(context.Background(), pod)
 			if err != nil {
 				// requeue with error
 				return reconcile.Result{}, err
